@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetIA - Asistente Veterinario Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 80%;
+            padding: 10px 15px;
+            margin: 5px 0;
+        }
+        .user-bubble {
+            background-color: #3b82f6;
+            color: white;
+            align-self: flex-end;
+        }
+        .ai-bubble {
+            background-color: #e0f2fe;
+            color: #1e3a8a;
+            align-self: flex-start;
+        }
+        .gallery-card {
+            transition: all 0.3s ease;
+        }
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .thinking-bubble {
+            background-color: #e0f2fe;
+            color: #1e3a8a;
+            align-self: flex-start;
+            padding: 10px 15px;
+            border-radius: 1rem;
+            margin: 5px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-blue-600 text-white py-4">
+            <div class="container mx-auto px-4 text-center">
+                <img src="/imagenes/logo.png" alt="Logo VetIA" class="mx-auto mb-2" style="max-width: 100px;">
+                <h1 class="text-3xl font-bold">VetIA</h1>
+                <p class="mt-2">Asistente Veterinario Inteligente para Bovinos</p>
+            </div>
+        </header>
+
+        <main class="flex-grow p-4">
+            <div class="chat-container p-4">
+                <div id="chat-container" class="flex flex-col h-96 overflow-y-auto">
+                    <div class="chat-bubble ai-bubble">
+                        ¡Hola! Soy VetIA, tu asistente especializado en bovinos. ¿En qué puedo ayudarte hoy?
+                    </div>
+                    <div id="thinking-bubble" class="thinking-bubble">
+                        Pensando...
+                    </div>
+                </div>
+                <form id="chat-form" class="flex mt-4">
+                    <input type="text" id="user-input" placeholder="Escribe tu pregunta aquí..." class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
+                        Enviar
+                    </button>
+                </form>
+            </div>
+
+            <section class="mt-8">
+                <h2 class="text-2xl font-bold text-center mb-4">Información sobre Bovinos</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="gallery-card bg-white p-4 rounded-lg shadow-md">
+                        <img src="/imagenes/Dosis_de_Medicamentos.jpg" alt="Dosis de Medicamentos" class="gallery-image">
+                        <h3 class="font-semibold mt-2">Dosis de Medicamentos</h3>
+                        <p class="mt-2">Las dosis de medicamentos para bovinos varían según la raza, peso y estado de salud. Es importante calcular la dosis adecuada para cada animal.</p>
+                        <a href="#" class="text-blue-600 hover:underline">Consultar tablas de dosis →</a>
+                    </div>
+                    <div class="gallery-card bg-white p-4 rounded-lg shadow-md">
+                        <img src="/imagenes/Protocolos_Quirurgicos.jpeg" alt="Protocolos Quirúrgicos" class="gallery-image">
+                        <h3 class="font-semibold mt-2">Protocolos Quirúrgicos</h3>
+                        <p class="mt-2">Los protocolos quirúrgicos para bovinos incluyen procedimientos como cesáreas y descolas. Asegúrate de seguir las guías adecuadas para cada caso.</p>
+                        <a href="#" class="text-blue-600 hover:underline">Ver protocolos quirúrgicos →</a>
+                    </div>
+                    <div class="gallery-card bg-white p-4 rounded-lg shadow-md">
+                        <img src="/imagenes/Guia_de_razas.jpeg" alt="Guía de Razas" class="gallery-image">
+                        <h3 class="font-semibold mt-2">Guía de Razas</h3>
+                        <p class="mt-2">Conoce las características y cuidados específicos de las diferentes razas de bovinos, como Holstein, Angus y Brahman.</p>
+                        <a href="#" class="text-blue-600 hover:underline">Explorar razas →</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-gray-800 text-white py-4">
+            <div class="container mx-auto text-center">
+                <p>© 2025 VetIA. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let isAskingForAnesthesia = false;
+        let isAskingForDetails = false;
+        let bovineDetails = {
+            age: null,
+            weight: null,
+            dosage: null
+        };
+
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('user-input').value.trim();
+            if (!userInput) return;
+
+            // Add user message to chat
+            addMessageToChat(userInput, 'user');
+
+            // Clear input
+            document.getElementById('user-input').value = '';
+
+            // Mostrar cuadro de "pensando"
+            document.getElementById('thinking-bubble').style.display = 'block';
+
+            // Simulate AI response with a delay
+            setTimeout(() => {
+                const aiResponse = generateAIResponse(userInput);
+                addMessageToChat(aiResponse, 'ai');
+
+                // Ocultar cuadro de "pensando"
+                document.getElementById('thinking-bubble').style.display = 'none';
+            }, 1000); // Simula un tiempo de "pensamiento"
+        });
+
+        function addMessageToChat(message, sender) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-bubble ${sender === 'user' ? 'user-bubble' : 'ai-bubble'}`;
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
+        }
+
+        function generateAIResponse(userInput) {
+            const lowerInput = userInput.toLowerCase();
+            let response = '';
+
+            if (lowerInput === 'hola') {
+                response = '¡Hola! ¿Cómo estás? ¿Qué necesitas?';
+            } else if (lowerInput.includes('holstein')) {
+                isAskingForAnesthesia = true; // Activar la variable para preguntar sobre anestesia
+                response = 'El bovino Holstein es conocido por su alta producción de leche. ¿Te gustaría saber cómo anestesiarlo?';
+            } else if (isAskingForAnesthesia && lowerInput === 'si') {
+                isAskingForDetails = true; // Activar la variable para pedir detalles
+                response = 'Genial. Para anestesiarlo, necesito algunos datos. ¿Cuál es la edad del bovino?';
+                isAskingForAnesthesia = false; // Reiniciar la variable
+            } else if (isAskingForDetails && !isNaN(lowerInput)) {
+                if (bovineDetails.age === null) {
+                    bovineDetails.age = parseInt(lowerInput); // Guardar la edad
+                    response = 'Perfecto, ¿cuál es el peso del bovino?';
+                } else {
+                    bovineDetails.weight = parseFloat(lowerInput); // Guardar el peso
+                    // Validar que el usuario sea profesional veterinario antes de mostrar la dosis
+                    const isVet = confirm('¿Eres un profesional veterinario? Esta información es solo para uso profesional.');
+                    if (isVet) {
+                        const dosage = calculateDosage(bovineDetails.weight);
+                        response = `Para un bovino de ${bovineDetails.weight} kg, necesitarás ${dosage} mg de anestesia. <strong>Advertencia:</strong> Consulta siempre con un veterinario certificado antes de administrar medicamentos.`;
+                    } else {
+                        response = 'Lo siento, solo puedo proporcionar información de dosificación a profesionales veterinarios certificados.';
+                    }
+                    isAskingForDetails = false; // Reiniciar la variable
+                    bovineDetails = { age: null, weight: null, dosage: null }; // Reiniciar detalles
+                }
+            } else if (isAskingForDetails) {
+                response = 'Por favor, proporciona un número válido para la edad o el peso.';
+            } else if (lowerInput.includes('anestesia')) {
+                response = 'La dosis de anestesia puede variar según el tipo de anestésico y el peso del bovino. Por ejemplo, para xilacina, se sugiere entre 0.1 a 0.2 mg/kg. <strong>Advertencia:</strong> Esta información es solo para profesionales veterinarios. ¿Eres un profesional veterinario y tienes un bovino específico en mente?';
+            } else if (lowerInput.includes('ciclo de gestación')) {
+                response = 'El ciclo de gestación de las vacas dura aproximadamente 283 días, aunque puede variar entre 279 y 287 días. Es un período crucial para el desarrollo del ternero. ¿Te gustaría saber más sobre el cuidado durante la gestación?';
+            } else if (lowerInput.includes('vaca')) {
+                response = 'Las vacas requieren cuidados específicos. ¿Qué información necesitas sobre ellas?';
+            } else {
+                response = 'Hmm, eso es interesante. Pero no tengo información sobre eso. ¿Puedes preguntar algo más específico?';
+            }
+
+            return response;
+        }
+
+        const ANESTHESIA_DOSAGE_PER_KG = 0.1; // Dosis de anestesia en mg/kg
+
+        function calculateDosage(weight) {
+            // Usar la constante para la dosis por kg
+            return (weight * ANESTHESIA_DOSAGE_PER_KG).toFixed(2); // Retorna la dosis en miligramos
+        }
+    </script>
+</body>
+</html>
