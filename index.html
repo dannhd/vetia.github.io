@@ -57,10 +57,11 @@
         }
         .logo {
             max-width: 150px;
-            margin: -12% auto -19%;
+            margin: -11% auto -19%;
             display: block;
         }
     </style>
+    <link rel="icon" type="image/x-icon" href="imagenes/favicon.ico">
 </head>
 <body>
     <div class="min-h-screen flex flex-col">
@@ -187,7 +188,7 @@
                     const isVet = confirm('¿Eres un profesional veterinario? Esta información es solo para uso profesional.');
                     if (isVet) {
                         const dosage = calculateDosage(bovineDetails.weight);
-                        response = `Para un bovino de ${bovineDetails.weight} kg, necesitarás ${dosage} mg de anestesia. <strong>Advertencia:</strong> Consulta siempre con un veterinario certificado antes de administrar medicamentos.`;
+                        response = `Para un bovino de ${bovineDetails.weight} kg, necesitarás ${dosage} mg de anestesia. Advertencia: Consulta siempre con un veterinario certificado antes de administrar medicamentos.`;
                     } else {
                         response = 'Lo siento, solo puedo proporcionar información de dosificación a profesionales veterinarios certificados.';
                     }
