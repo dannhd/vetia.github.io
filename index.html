@@ -185,14 +185,8 @@
                     response = 'Perfecto, ¿cuál es el peso del bovino?';
                 } else {
                     bovineDetails.weight = parseFloat(lowerInput); // Guardar el peso
-                    // Validar que el usuario sea profesional veterinario antes de mostrar la dosis
-                    const isVet = confirm('¿Eres un profesional veterinario? Esta información es solo para uso profesional.');
-                    if (isVet) {
-                        const dosage = calculateDosage(bovineDetails.weight);
-                        response = `Para un bovino de ${bovineDetails.weight} kg, necesitarás ${dosage} mg de anestesia. Advertencia: Consulta siempre con un veterinario certificado antes de administrar medicamentos.`;
-                    } else {
-                        response = 'Lo siento, solo puedo proporcionar información de dosificación a profesionales veterinarios certificados.';
-                    }
+                    const dosage = calculateDosage(bovineDetails.weight);
+                    response = `Para un bovino de ${bovineDetails.weight} kg, necesitarás ${dosage} mg de anestesia. Advertencia: Consulta siempre con un veterinario certificado antes de administrar medicamentos.`;
                     isAskingForDetails = false; // Reiniciar la variable
                     bovineDetails = { age: null, weight: null, dosage: null }; // Reiniciar detalles
                 }
